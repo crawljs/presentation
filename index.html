@@ -104,11 +104,6 @@
           <p class="fragment">Workers</p>
           <p class="fragment">Queues</p>
           <p class="fragment">Stores</p>
-          <aside class="notes">
-            - worker: fetch &amp; store a page. extract links out of it
-            - queues: manage URLs for all workers.
-            - stores: persist downloaded content
-          </aside>
         </section>
 
         <section data-background="img/system_overview.svg" data-background-size="60%">
@@ -118,10 +113,12 @@
           <h2>Queue</h2>
           <ul>
             <li>a sorted set</li>
-            <li>identified by a key. Ex. <b>urls:1</b></li>
             <li>backed by redis - an advanced key-value store.</li>
+            <li>identified by a key. Ex. <b>urls:1</b></li>
+            <!--
             <li>multiple producers (all workers)</li>
             <li>atomic Test-and-set operation <b>required</b></li>
+            -->
           </ul>
         </section>
 
@@ -131,11 +128,11 @@
         <section>
           <h2>Worker</h2>
           <ul>
+            <li>Startup arguments: <b>url-block</b></li>
             <li>Fetch pages concurrently (configurable)</li>
-            <li>Extract &amp; dispatch links</li>
+            <li>Parse &amp; store content</li>
             <li>Independent &amp; autonomic (local queue)</li>
             <li>depends on <b>mapper</b></li>
-            <li>Startup arguments: <b>url-block</b></li>
           </ul>
           <aside class="notes">
             - At any given time a worker is able to map an URL to an identifier <b>independently</b>
@@ -149,8 +146,7 @@
         <section>
           <h3>Mapper</h3>
           <ul>
-            <li>software module</li>
-            <li><b>split</b> URL space</li>
+            <li>a hash function. (currently MD5)</li>
             <li>maps any URL to an <b>id</b> E {0,1,..,#workers}</li>
             <li>all URLs with the same <b>id</b> belong to one <b>block</b></li>
             <li class="fragment">no communication needed!</li>
@@ -166,7 +162,6 @@
           <ul>
             <li>Persist downloaded content (html/images)</li>
             <li>Implementations: Filesystem, cassandra, riak, dummy</li>
-            <li>basic put operation</li>
           </ul>
         </section>
 
